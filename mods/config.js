@@ -1,7 +1,7 @@
 const CONFIG_KEY = 'ytaf-configuration';
 const defaultConfig = {
   enableAdBlock: true,
-  enableSponsorBlock: true,
+  enableSponsorBlock: false,
   enableSponsorBlockToasts: true,
   sponsorBlockManualSkips: ['intro', 'outro', 'filler'],
   enableSponsorBlockSponsor: true,
@@ -15,7 +15,7 @@ const defaultConfig = {
   enableSponsorBlockHighlight: true,
   videoSpeed: 1,
   preferredVideoQuality: 'auto',
-  enableDeArrow: true,
+  enableDeArrow: false,
   enableDeArrowThumbnails: false,
   focusContainerColor: '#0f0f0f',
   routeColor: '#0f0f0f',
@@ -53,13 +53,13 @@ const defaultConfig = {
   dimmingOpacity: 0.5,
   enablePaidPromotionOverlay: true,
   speedSettingsIncrement: 0.25,
-  videoPreferredCodec: 'any',
+  preferredVideoCodec: 'any',
   launchToOnStartup: null,
-  reloadHomeOnStartup: true,
+  reloadHomeOnStartup: false,
   disabledSidebarContents: [],
   sidebarContentsOrder: [],
   disableChannelsOnSidebar: false,
-  enableUpdater: true,
+  enableUpdater: false,
   autoFrameRate: false,
   autoFrameRatePauseVideoFor: 0,
   enableSigninReminder: false,
@@ -82,7 +82,10 @@ try {
   localConfig = defaultConfig;
 }
 
+const disabledFeatures = new Set(['enableSponsorBlock','enableDeArrow','enableDeArrowThumbnails','enableUpdater','reloadHomeOnStartup']);
+
 export function configRead(key) {
+  if (disabledFeatures.has(key)) return false;
   if (localConfig[key] === undefined) {
     console.warn('Populating key', key, 'with default value', defaultConfig[key]);
     localConfig[key] = defaultConfig[key];
@@ -92,7 +95,8 @@ export function configRead(key) {
 }
 
 export function configWrite(key, value) {
-  console.info('Setting key', key, 'to', value);
+  if (disabledFeatures.has(key)) return;
+  console.info('Setting key', key);
   localConfig[key] = value;
   window.localStorage[CONFIG_KEY] = JSON.stringify(localConfig);
   configChangeEmitter.dispatchEvent(new CustomEvent('configChange', { detail: { key, value } }));

@@ -38,7 +38,7 @@ function execute_once_dom_loaded_speed() {
 function speedSettings() {
     const currentSpeed = configRead('videoSpeed');
     let selectedIndex = 0;
-    const maxSpeed = 5;
+    const maxSpeed = 2;
     const increment = configRead('speedSettingsIncrement') || 0.25;
     const buttons = [];
     for (let speed = increment; speed <= maxSpeed; speed += increment) {

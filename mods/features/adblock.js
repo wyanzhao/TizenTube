@@ -22,11 +22,6 @@ JSON.parse = function () {
     const adBlockEnabled = configRead('enableAdBlock');
     const signinReminderEnabled = configRead('enableSigninReminder');
 
-    if (r?.playbackContext?.contentPlaybackContext) {
-      // Handle inline playback without ads
-      console.log(r.playbackContext.contentPlaybackContext);
-    }
-
     if (r.adPlacements && adBlockEnabled) {
       r.adPlacements = [];
     }
@@ -398,45 +393,9 @@ function addPreviews(items) {
 }
 
 function deArrowify(items) {
-  for (const item of items) {
-    if (item.adSlotRenderer) {
-      const index = items.indexOf(item);
-      items.splice(index, 1);
-      continue;
-    }
-    if (!item.tileRenderer && item.lockupViewModel) continue;
-    if (!item?.lockupViewModel?.contentType !== 'LOCKUP_CONTENT_TYPE_VIDEO') continue;
-    if (configRead('enableDeArrow')) {
-      const videoID = item.tileRenderer.contentId || item.lockupViewModel.contentId;
-      fetch(`https://sponsor.ajay.app/api/branding?videoID=${videoID}`).then(res => res.json()).then(data => {
-        if (data.titles.length > 0) {
-          const mostVoted = data.titles.reduce((max, title) => max.votes > title.votes ? max : title);
-          item.tileRenderer ?
-            item.tileRenderer.metadata.tileMetadataRenderer.title.simpleText = mostVoted.title
-            : item.lockupViewModel.metadata.lockupMetadataViewModel.title.content = mostVoted.title;
-        }
-
-        if (data.thumbnails.length > 0 && configRead('enableDeArrowThumbnails')) {
-          const mostVotedThumbnail = data.thumbnails.reduce((max, thumbnail) => max.votes > thumbnail.votes ? max : thumbnail);
-          if (mostVotedThumbnail.timestamp) {
-            item.tileRenderer ?
-              item.tileRenderer.header.tileHeaderRenderer.thumbnail.thumbnails = [
-                {
-                  url: `https://dearrow-thumb.ajay.app/api/v1/getThumbnail?videoID=${videoID}&time=${mostVotedThumbnail.timestamp}`,
-                  width: 1280,
-                  height: 640
-                }
-              ] : item.lockupViewModel.contentImage.thumbnailViewModel.image.sources = [
-                {
-                  url: `https://dearrow-thumb.ajay.app/api/v1/getThumbnail?videoID=${videoID}&time=${mostVotedThumbnail.timestamp}`,
-                  width: 1280,
-                  height: 640
-                }
-              ]
-          }
-        }
-      }).catch(() => { });
-    }
+  // This build performs no third-party branding lookup.
+  for (let i = items.length - 1; i >= 0; i--) {
+    if (items[i]?.adSlotRenderer && configRead('enableAdBlock')) items.splice(i, 1);
   }
 }
 

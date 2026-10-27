@@ -4,3 +4,8 @@ node_modules/
 dist/
 .sign
 package-lock.json
+build/
+standalone/service/userscript.js
+standalone/service/build.json
+*.p12
+.DS_Store

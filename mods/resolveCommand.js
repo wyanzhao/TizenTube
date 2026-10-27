@@ -3,7 +3,6 @@ import { enablePip } from './features/pictureInPicture.js';
 import modernUI, { optionShow } from './ui/settings.js';
 import { speedSettings } from './ui/speedUI.js';
 import { showToast, buttonItem, showModal, QrCodeRenderer, overlayPanelItemListRenderer, overlayMessageRenderer } from './ui/ytUI.js';
-import checkForUpdates from './features/updater.js';
 import { t } from 'i18next';
 import { requestNextAndNavigateChannel, getFeedbackPanelTokens, sendFeedbackToken } from './utils/innerTubeCalls.js';
 import qrcode from 'qrcode-npm';
@@ -222,11 +221,11 @@ function customAction(action, parameters) {
             configWrite('dontCheckUpdateUntil', parameters);
             break;
         case 'UPDATE_DOWNLOAD':
-            window.h5vcc.tizentube.InstallAppFromURL(parameters);
-            showToast(t('settings.options.updater.downloading.title'), t('settings.options.updater.downloading.subtitle'));
             break;
         case 'SET_PLAYER_SPEED':
             const speed = Number(parameters);
+            if (!Number.isFinite(speed) || speed < 0.25 || speed > 2) break;
+            configWrite('videoSpeed', speed);
             document.querySelector('video').playbackRate = speed;
             break;
         case 'ENTER_MP':
@@ -247,7 +246,7 @@ function customAction(action, parameters) {
             showToast('TizenTube', t('toasts.videoQueueCleared'));
             break;
         case 'CHECK_FOR_UPDATES':
-            checkForUpdates(true);
+
             break;
         case 'GO_TO_CHANNEL':
             requestNextAndNavigateChannel(parameters);

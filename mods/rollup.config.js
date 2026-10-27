@@ -7,7 +7,8 @@ import replace from '@rollup/plugin-replace';
 import json from '@rollup/plugin-json';
 
 export default {
-    input: "userScript.js",
+    // TT_WITH_QA=1 builds the developer measurement variant (userScript.qa.js).
+    input: process.env.TT_WITH_QA === '1' ? "userScript.qa.js" : "userScript.js",
     output: { file: "../dist/userScript.js", format: "iife" },
     plugins: [
         json(),
@@ -31,10 +32,12 @@ export default {
             ],
         }),
         terser({
+            compress: { drop_console: true },
             ecma: '5',
             mangle: true,
         }),
         replace({
+            preventAssignment: true,
             '\uFFFF': '\u0000',
         })
     ]

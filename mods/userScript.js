@@ -1,15 +1,10 @@
-import initPatches from "./features/standaloneUserscript.js";
-if (window.location.hostname === 'localhost') {
-    initPatches();
-}
-import "./features/userAgentSpoofing.js";
+import "./features/rateCapFix.js";
 import "whatwg-fetch";
 import "core-js/proposals/object-getownpropertydescriptors";
 
 import './translations/index.js'
 import "./domrect-polyfill";
 import "./features/adblock.js";
-import "./features/sponsorblock.js";
 import "./ui/ui.js";
 import "./ui/speedUI.js";
 import "./ui/theme.js";
@@ -17,7 +12,6 @@ import "./ui/settings.js";
 import "./ui/disableWhosWatching.js";
 import "./features/moreSubtitles.js";
 import "./features/captionStylePersistence.js";
-import "./features/updater.js";
 import "./features/pictureInPicture.js";
 import "./features/preferredVideoQuality.js";
 import "./features/videoQueuing.js";

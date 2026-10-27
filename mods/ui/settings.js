@@ -801,7 +801,7 @@ export default function modernUI(update, parameters) {
 
     let index = 0;
     for (const setting of settings) {
-        if (!setting) continue;
+        if (!setting || setting.menuId === 'tt-sponsorblock-settings' || setting.name === t('settings.options.dearrow.title') || setting.name === t('settings.options.updater.title')) continue;
         const currentVal = setting.value ? configRead(setting.value) : null;
         buttons.push(
             buttonItem(
